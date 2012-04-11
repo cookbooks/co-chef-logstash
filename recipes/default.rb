@@ -126,7 +126,7 @@ node['logstash']['component'].each do |component|
       mode 0755
       variables(
         :logstash   => "#{node['logstash']['install_path']}/logstash-monolithic.jar",
-        :config     => "#{node['logstash']['config_path']}/#{component}",
+        :config     => "#{node['logstash']['config_path']}/#{component}.conf",
         :component  => component
       )
     end
