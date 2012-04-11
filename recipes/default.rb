@@ -17,8 +17,6 @@
 # limitations under the License.
 #
 
-include_recipe "java"
-
 root_group = value_for_platform(
   ["openbsd", "freebsd", "mac_os_x"] => { "default" => "wheel" },
   "default" => "root"
@@ -52,7 +50,7 @@ directory "#{node['logstash']['log_path']}" do
 end
 
 remote_file "#{node['logstash']['install_path']}/logstash-monolithic.jar" do
-  source "http://semicomplete.com/files/logstash/logstash-#{node['logstash']['version']}-monolithic.jar"
+  source "#{node['logstash']['source']}logstash-#{node['logstash']['version']}-monolithic.jar"
   owner node['logstash']['user_login']
   group node['logstash']['user_group']
   checksum node['logstash']['checksum']
@@ -62,15 +60,14 @@ remote_file "#{node['logstash']['install_path']}/logstash-monolithic.jar" do
 end
 
 if node['logstash']['component'].include?('agent') && node['logstash']['default_agent_config']
-
-  case node[:platform]
-  when "redhat","centos","scientific","fedora","suse","arch"
-    apache_log_dir = '/var/log/httpd'
-  when "debian","ubuntu"
-    apache_log_dir = '/var/log/apache2'
-  else
-    apache_log_dir = '/var/log/apache2'
-  end
+  apache_log_dir = value_for_platform(
+    ["centos", "redhat", "suse", "fedora", "arch", "scientific"] => {
+      "default" => "/var/log/httpd"
+    },
+    "default" => {
+      "default" => "/var/log/apache2"
+    }
+  )
 
   template "#{node['logstash']['config_path']}/agent.conf" do
     source "agent.conf.erb"
@@ -82,35 +79,39 @@ if node['logstash']['component'].include?('agent') && node['logstash']['default_
       :apache_log_dir => apache_log_dir
       )
   end
+end
 
+init_style = node['logstash']['init_style']
+init_style ||= value_for_platform(
+  ["centos", "redhat", "suse", "fedora", "arch", "scientific"] => {
+    "default" => "daemonize"
+  },
+  ["ubuntu", "debian"] => {
+    "default" => "runit"
+  },
+  "default" => { "default" => "unknown" }
+)
+
+package "daemonize" do
+  action :upgrade
+  only_if { init_style == "daemonize" }
 end
 
 node['logstash']['component'].each do |component|
-  case node['logstash']['init_style']
+  case init_style
   when 'daemonize'
-
-    case node[:platform]
-    when 'redhat', 'centos', 'scientific'
-      include_recipe "yum::epel"
-    
-      package "daemonize" do
-        action :upgrade
-      end
-  
-      template "/etc/init.d/logstash-#{component}" do
-        source "logstash-#{component}.init.erb"
-        owner "root"
-        group root_group
-        mode 0755
-        notifies :restart, "service[logstash-#{component}]"
-      end
-  
-      service "logstash-#{component}" do
-        supports :status => true, :start => true, :stop => true, :restart => true
-        action [:enable, :start]
-      end
+    template "/etc/init.d/logstash-#{component}" do
+      source "logstash-#{component}.init.erb"
+      owner "root"
+      group root_group
+      mode 0755
+      notifies :restart, "service[logstash-#{component}]"
     end
 
+    service "logstash-#{component}" do
+      supports :status => true, :start => true, :stop => true, :restart => true
+      action [:enable, :start]
+    end
   when 'runit'
     runit_service "logstash-#{component}"  
   else

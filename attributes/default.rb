@@ -17,14 +17,16 @@
 # limitations under the License.
 #
 
-default['logstash']['version']  = "1.0.17"
-default['logstash']['checksum'] = "caba048cb1ab3cc608d4569246f8b7effbb8272865c7864a662566c30517316c"
+default['logstash']['version']  = "1.1.0"
+default['logstash']['checksum'] = "6c9f491865b5eed569e029f6ad9f3343f346cfa04d04314e7aadea7b9578490f"
+default['logstash']['source'] = "http://semicomplete.com/files/logstash/"
 
-default['logstash']['install_path'] = "/srv/logstash"
+default['logstash']['install_path'] = "/opt/logstash"
 default['logstash']['config_path']  = "/etc/logstash"
 default['logstash']['log_path']     = "/var/log/logstash"
 default['logstash']['pattern_path'] = nil # if you have grok installed, you can set this and the agent will use it
 
+# Can be one or both of: 'agent', 'web'
 default['logstash']['component'] = [ 'agent', 'web' ]
 
 # set this to false requires you to get your logstash agent config files in :config_path BEFORE this recipe is run
@@ -36,13 +38,25 @@ default['logstash']['user_uid']   = 61022
 default['logstash']['user_group']     = 'logstash'
 default['logstash']['user_group_gid'] = 61022
 
+# Memory (MB)
 default['logstash']['java_agent'] = '256'
 default['logstash']['java_web']   = '256'
+  
+# AMQP broker - Used for the default agent config
+default['logstash']['amqp']['host'] = 'localhost'
+default['logstash']['amqp']['type'] = 'all'
+default['logstash']['amqp']['exchange'] = 'rawlogs'
+default['logstash']['amqp']['name'] = 'rawlogs_consumer'
+default['logstash']['amqp']['user'] = 'guest'
+default['logstash']['amqp']['password'] = 'guest'
 
-# Values:
-# runit [for ubuntu, debian, gentoo ]
-# daemonize [ for RH, centos, scientific]
-default['logstash']['init_style'] = 'runit'
+# System init script style
+# Set to nil to automatically pick the appropriate style based on OS.
+# Possible explicit values include:
+#   runit [for ubuntu, debian, gentoo ]
+#   daemonize [ for RH, centos, scientific]
+#
+default['logstash']['init_style'] = nil
 
 default['logstash']['elasticsearch']['embedded'] = true
 default['logstash']['elasticsearch']['host']     = 'localhost'

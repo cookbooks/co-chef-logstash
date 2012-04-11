@@ -1,23 +1,47 @@
 # Default config example from:
-# - http://logstash.net/docs/1.0.14/getting-started-simple
+# - http://logstash.net/docs/1.1.0/tutorials/getting-started-centralized
 
 input {
-  file {
-    type => "linux-syslog"
-    path => [ "/var/log/*.log", "/var/log/messages", "/var/log/syslog" ]
-  }
-
-  file {
-    type => "apache-access"
-    path => "<%= @apache_log_dir %>/access.log"
-  }
-
-  file {
-    type => "apache-error"
-    path => "<%= @apache_log_dir %>/error.log"
+ amqp {
+    # ship logs to the 'rawlogs' fanout queue.
+    type => "<%= node['logstash']['amqp']['type'] %>"
+    host => "<%= node['logstash']['amqp']['host'] %>"
+    exchange => "<%= node['logstash']['amqp']['exchange'] %>"
+    name => "<%= node['logstash']['amqp']['name'] %>"
+    user => "<%= node['logstash']['amqp']['user'] %>"
+    password => "<%= node['logstash']['amqp']['password'] %>"
   }
 }
 
+filter {
+  grok {
+    type => "syslog" # for logs of type "syslog"
+    pattern => "%{SYSLOGLINE}"
+    # You can specify multiple 'pattern' lines
+  }
+
+  grok {
+    type => "apache-access" # for logs of type 'apache-access'
+    pattern => "%{COMBINEDAPACHELOG}"
+  }
+
+  date {
+    type => "syslog"
+
+    # The 'timestamp' and 'timestamp8601' names are for fields in the
+    # logstash event.  The 'SYSLOGLINE' grok pattern above includes a field
+    # named 'timestamp' that is set to the normal syslog timestamp if it
+    # exists in the event.
+    timestamp => "MMM  d HH:mm:ss"   # syslog 'day' value can be space-leading
+    timestamp => "MMM dd HH:mm:ss"
+    timestamp8601 => ISO8601 # Some syslogs use ISO8601 time format
+  }
+
+  date {
+    type => "apache-access"
+    timestamp => "dd/MMM/yyyy:HH:mm:ss Z"
+  }
+}
 output {
   # Emit events to stdout for easy debugging of what is going through
   # logstash.
