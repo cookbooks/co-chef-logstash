@@ -24,6 +24,7 @@ output {
     bind_host => "<%= node['logstash']['elasticsearch']['host'] %>"
     host => "<%= node['logstash']['elasticsearch']['host'] %>"
     port => <%= node['logstash']['elasticsearch']['port'] %>
+    embedded => <%= node['logstash']['elasticsearch']['embedded'] %>
     <% if node['logstash']['elasticsearch']['cluster'] %>
     cluster => "<%= node['logstash']['elasticsearch']['cluster'] %>"
     <% end %>
