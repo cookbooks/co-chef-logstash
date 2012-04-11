@@ -1,9 +1,13 @@
+# Indexer Agent
+#
+# Receives logs from other logstash instances 
+# (via AMQP) and pushes them into elasticsearch
+# 
 # Default config example from:
 # - http://logstash.net/docs/1.1.0/tutorials/getting-started-centralized
 
 input {
  amqp {
-    # ship logs to the 'rawlogs' fanout queue.
     type => "<%= node['logstash']['amqp']['type'] %>"
     host => "<%= node['logstash']['amqp']['host'] %>"
     exchange => "<%= node['logstash']['amqp']['exchange'] %>"
@@ -43,10 +47,7 @@ filter {
   }
 }
 output {
-  # Emit events to stdout for easy debugging of what is going through
-  # logstash.
-  stdout { }
-
+  
   # This will use elasticsearch to store your logs.
   # The 'embedded' option will cause logstash to run the elasticsearch
   # server in the same process, so you don't have to worry about

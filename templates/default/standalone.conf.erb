@@ -1,0 +1,32 @@
+# Standalone Agent. 
+#
+# Reads logs from input and ships them directly to elasticsearch
+
+input {
+<% @inputs.each do |section_data| %>
+    <% section_data.each do |section, config| %>
+    <%= section %> {
+    <% if config %>
+    <% config.each do |k, v| %>
+        <%= k %> => <%= v.inspect %>
+    <% end %>
+    <% end %>
+    }
+    <% end %>
+<% end %>
+}
+
+output {
+  <% if node['logstash']['elasticsearch']['embedded'] %>
+  elasticsearch { embedded => true }
+  <% else %>
+  elasticsearch {
+    bind_host => "<%= node['logstash']['elasticsearch']['host'] %>"
+    host => "<%= node['logstash']['elasticsearch']['host'] %>"
+    port => <%= node['logstash']['elasticsearch']['port'] %>
+    <% if node['logstash']['elasticsearch']['cluster'] %>
+    cluster => "<%= node['logstash']['elasticsearch']['cluster'] %>"
+    <% end %>
+  }
+  <% end %>
+}

@@ -26,6 +26,9 @@ default['logstash']['config_path']  = "/etc/logstash"
 default['logstash']['log_path']     = "/var/log/logstash"
 default['logstash']['pattern_path'] = nil # if you have grok installed, you can set this and the agent will use it
 
+# List of data bag items that contain config data for logstash shippers
+default['logstash']['data_bag_items'] = []
+
 # Can be one or both of: 'agent', 'web'
 default['logstash']['component'] = [ 'agent', 'web' ]
 
@@ -49,6 +52,7 @@ default['logstash']['amqp']['exchange'] = 'rawlogs'
 default['logstash']['amqp']['name'] = 'rawlogs_consumer'
 default['logstash']['amqp']['user'] = 'guest'
 default['logstash']['amqp']['password'] = 'guest'
+default['logstash']['amqp']['exchange_type'] = 'fanout'
 
 # System init script style
 # Set to nil to automatically pick the appropriate style based on OS.
@@ -62,3 +66,4 @@ default['logstash']['init_style'] = nil
 default['logstash']['elasticsearch']['embedded'] = true
 default['logstash']['elasticsearch']['host']     = 'localhost'
 default['logstash']['elasticsearch']['cluster']  = nil
+default['logstash']['elasticsearch']['port']     = 9300 

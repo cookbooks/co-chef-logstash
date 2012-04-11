@@ -62,28 +62,6 @@ remote_file "#{node['logstash']['install_path']}/logstash-monolithic.jar" do
   end
 end
 
-if node['logstash']['component'].include?('agent') && node['logstash']['default_agent_config']
-  apache_log_dir = value_for_platform(
-    ["centos", "redhat", "suse", "fedora", "arch", "scientific"] => {
-      "default" => "/var/log/httpd"
-    },
-    "default" => {
-      "default" => "/var/log/apache2"
-    }
-  )
-
-  template "#{node['logstash']['config_path']}/agent.conf" do
-    source "agent.conf.erb"
-    owner "root"
-    group root_group
-    mode 0644
-    notifies :restart, "service[logstash-agent]"
-    variables(
-      :apache_log_dir => apache_log_dir
-      )
-  end
-end
-
 init_style = node['logstash']['init_style']
 init_style ||= value_for_platform(
   ["centos", "redhat", "suse", "fedora", "arch", "scientific"] => {
