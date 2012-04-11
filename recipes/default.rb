@@ -118,7 +118,7 @@ node['logstash']['component'].each do |component|
   when 'runit'
     runit_service "logstash-#{component}"  
   when 'supervisord'
-    # Write a bash script that will get monitored by Supervisord
+    # Write a bash script that will get run/monitored by Supervisord
     template "#{node['logstash']['install_path']}/supervisord_command.sh" do
       source "supervisord_command.sh.erb"
       owner "root"
