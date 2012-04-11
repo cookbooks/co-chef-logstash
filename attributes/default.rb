@@ -29,7 +29,7 @@ default['logstash']['pattern_path'] = nil # if you have grok installed, you can 
 # List of data bag items that contain config data for logstash shippers
 default['logstash']['data_bag_items'] = []
 
-# Can be one or both of: 'agent', 'web'
+# Can be one or both of: 'agent', 'web', 'standalone', 'shipper', 'indexer'
 default['logstash']['component'] = [ 'agent', 'web' ]
 
 # set this to false requires you to get your logstash agent config files in :config_path BEFORE this recipe is run
