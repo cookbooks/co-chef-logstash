@@ -118,7 +118,18 @@ node['logstash']['component'].each do |component|
   when 'runit'
     runit_service "logstash-#{component}"  
   when 'supervisord'
-    # Don't do anything; Configure supervisord separately
+    # Write a bash script that will get monitored by Supervisord
+    template "#{node['logstash']['install_path']}/supervisord_command.sh" do
+      source "supervisord_command.sh.erb"
+      owner "root"
+      group root_group
+      mode 0755
+      variables(
+        :logstash   => "#{node['logstash']['install_path']}/logstash-monolithic.jar",
+        :config     => "#{node['logstash']['config_path']}/#{component}",
+        :component  => component
+      )
+    end
   else
     service "logstash-#{component}" do
       action :nothing
