@@ -54,8 +54,11 @@ remote_file "#{node['logstash']['install_path']}/logstash-monolithic.jar" do
   owner node['logstash']['user_login']
   group node['logstash']['user_group']
   checksum node['logstash']['checksum']
-  node['logstash']['component'].each do |component|
-    notifies :restart, "service[logstash-#{component}]"
+  # don't set up a service if we're using supervisord
+  unless node['logstash']['init_style'] == "supervisord"
+    node['logstash']['component'].each do |component|
+      notifies :restart, "service[logstash-#{component}]"
+    end
   end
 end
 
@@ -114,6 +117,8 @@ node['logstash']['component'].each do |component|
     end
   when 'runit'
     runit_service "logstash-#{component}"  
+  when 'supervisord'
+    # Don't do anything; Configure supervisord separately
   else
     service "logstash-#{component}" do
       action :nothing

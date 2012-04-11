@@ -55,6 +55,7 @@ default['logstash']['amqp']['password'] = 'guest'
 # Possible explicit values include:
 #   runit [for ubuntu, debian, gentoo ]
 #   daemonize [ for RH, centos, scientific]
+#   supervisord [any platform on which supervisord works; see http://supervisord.org/]
 #
 default['logstash']['init_style'] = nil
 
