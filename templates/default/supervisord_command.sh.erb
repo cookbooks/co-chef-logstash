@@ -6,11 +6,11 @@ AGENT="<%= @component == 'web' ? 'web' : 'agent' %>"
 
 ARGS="-Xms${JAVAMEM}M -Xmx${JAVAMEM}M -jar <%= @logstash %> ${AGENT} -f <%= @config %>"
 <% if node['logstash']['pattern_path'] -%>
-ARGS="$ARGS --grok-patterns-path <%= node['logstash']['pattern_path'] %>"
+ARGS="$ARGS --grok-patterns-path <%= node['logstash']['pattern_path'] -%>"
 <% end -%>
 
 <% if @component == 'web' && ! node['logstash']['elasticsearch']['embedded'] -%>
 ARGS="$ARGS --backend elasticsearch://<%= node['logstash']['elasticsearch']['host'] %>/<%= node['logstash']['elasticsearch']['cluster'] %>"
 <% end -%>
 
-$JAVA $ARGS
+$JAVA $ARGS > <%= "#{node['logstash']['log_path']}/#{@component}.log" -%>
