@@ -46,13 +46,18 @@ default['logstash']['java_agent'] = '256'
 default['logstash']['java_web']   = '256'
   
 # AMQP broker - Used for the default agent config
-default['logstash']['amqp']['host'] = 'localhost'
-default['logstash']['amqp']['type'] = 'all'
-default['logstash']['amqp']['exchange'] = 'rawlogs'
-default['logstash']['amqp']['name'] = 'rawlogs_consumer'
-default['logstash']['amqp']['user'] = 'guest'
-default['logstash']['amqp']['password'] = 'guest'
-default['logstash']['amqp']['exchange_type'] = 'fanout'
+default['logstash']['amqp']['debug'] = false
+default['logstash']['amqp']['durable'] = true             # should the exchange survive a broker restart 
+default['logstash']['amqp']['exchange_type'] = 'fanout'   # The exchange type (fanout, topic, direct)
+default['logstash']['amqp']['host'] = 'localhost'         # Your amqp server address
+default['logstash']['amqp']['name'] = 'rawlogs_consumer'  # The name of the exchange that consumers connect to
+default['logstash']['amqp']['exchange'] = 'rawlogs'       # where logs are pushed
+default['logstash']['amqp']['user'] = 'guest'             # Your amqp username
+default['logstash']['amqp']['password'] = 'guest'         # Your amqp password
+default['logstash']['amqp']['persistent'] = true          # Persist messages to disk until read by a consumer?
+default['logstash']['amqp']['port'] = '5672'              # amqp port
+default['logstash']['amqp']['type'] = 'all'               # Type of messages to read (default: read all messages)
+default['logstash']['amqp']['vhost'] = '/'                # The vhost to use
 
 # System init script style
 # Set to nil to automatically pick the appropriate style based on OS.

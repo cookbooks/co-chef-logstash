@@ -3,10 +3,11 @@
 # Receives logs from other logstash instances 
 # (via AMQP) and pushes them into elasticsearch
 # 
-# Default config example from:
+# Based on the indexer example here:
 # - http://logstash.net/docs/1.1.0/tutorials/getting-started-centralized
 
 input {
+ # AMQP Docs: http://logstash.net/docs/1.0.17/inputs/amqp
  amqp {
     type => "<%= node['logstash']['amqp']['type'] %>"
     host => "<%= node['logstash']['amqp']['host'] %>"
@@ -14,6 +15,9 @@ input {
     name => "<%= node['logstash']['amqp']['name'] %>"
     user => "<%= node['logstash']['amqp']['user'] %>"
     password => "<%= node['logstash']['amqp']['password'] %>"
+    vhost => "<%= node['logstash']['amqp']['vhost'] %>"
+    port => "<%= node['logstash']['amqp']['port'] %>"
+    <% if node['logstash']['amqp']['debug'] %>debug => "true"<% end %> 
   }
 }
 
