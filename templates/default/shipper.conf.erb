@@ -30,7 +30,7 @@ output {
     user => "<%= node['logstash']['amqp']['user'] %>"
     password => "<%= node['logstash']['amqp']['password'] %>"
     vhost => "<%= node['logstash']['amqp']['vhost'] %>"
-    port => "<%= node['logstash']['amqp']['post'] %>"
+    port => "<%= node['logstash']['amqp']['port'] %>"
     durable => "<%= node['logstash']['amqp']['durable'] %>"
     persistent => "<%= node['logstash']['amqp']['persistent'] %>"
     <% if node['logstash']['amqp']['debug'] %>debug => "true"<% end %>
