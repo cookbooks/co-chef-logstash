@@ -7,7 +7,6 @@
 # - http://logstash.net/docs/1.1.0/tutorials/getting-started-centralized
 
 input {
- # AMQP Docs: http://logstash.net/docs/1.0.17/inputs/amqp
  amqp {
     type => "<%= node['logstash']['amqp']['type'] %>"
     host => "<%= node['logstash']['amqp']['host'] %>"
@@ -25,7 +24,6 @@ filter {
   grok {
     type => "syslog" # for logs of type "syslog"
     pattern => "%{SYSLOGLINE}"
-    # You can specify multiple 'pattern' lines
   }
 
   grok {
@@ -35,12 +33,7 @@ filter {
 
   date {
     type => "syslog"
-
-    # The 'timestamp' and 'timestamp8601' names are for fields in the
-    # logstash event.  The 'SYSLOGLINE' grok pattern above includes a field
-    # named 'timestamp' that is set to the normal syslog timestamp if it
-    # exists in the event.
-    timestamp => "MMM  d HH:mm:ss"   # syslog 'day' value can be space-leading
+    timestamp => "MMM  d HH:mm:ss" # syslog 'day' value can be space-leading
     timestamp => "MMM dd HH:mm:ss"
     timestamp8601 => ISO8601 # Some syslogs use ISO8601 time format
   }
@@ -51,7 +44,6 @@ filter {
   }
 }
 output {
-  
   # This will use elasticsearch to store your logs.
   # The 'embedded' option will cause logstash to run the elasticsearch
   # server in the same process, so you don't have to worry about

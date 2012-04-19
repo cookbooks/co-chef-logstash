@@ -1,11 +1,6 @@
 # Shipper Agent. 
-#
 # Reads logs from input  and ships them to AMQP.
-# java -jar logstash-1.1.0-monolithic.jar agent -f shipper.conf
 
-
-# TODO: specify vhost: http://logstash.net/docs/1.0.17/inputs/amqp
-#
 input {
 <% @inputs.each do |section_data| %>
     <% section_data.each do |section, config| %>
@@ -21,8 +16,6 @@ input {
 }
 
 output {
-  # Ship events to the amqp exchange
-  # http://logstash.net/docs/1.1.0/outputs/amqp
   amqp {
     host => "<%= node['logstash']['amqp']['host'] %>"
     exchange_type => "<%= node['logstash']['amqp']['exchange_type'] %>"
