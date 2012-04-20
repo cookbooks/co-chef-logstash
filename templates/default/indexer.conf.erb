@@ -52,8 +52,10 @@ output {
 <% if node['logstash']['elasticsearch']['embedded'] -%>
     embedded => true
 <% else -%>
-    <% if node['logstash']['elasticsearch']['cluster'] -%>cluster => "<%= node['logstash']['elasticsearch']['cluster'] %>"<% end -%>
+    embedded => false
     host => "<%= node['logstash']['elasticsearch']['host'] %>"
+    <% if node['logstash']['elasticsearch']['cluster'] -%>cluster => "<%= node['logstash']['elasticsearch']['cluster'] %>"<% end -%>
+    <% if node['logstash']['elasticsearch']['port'] -%>port => <%= node['logstash']['elasticsearch']['port'] %><% end -%>
 <% end -%>
   }
 }
